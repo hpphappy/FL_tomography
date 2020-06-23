@@ -7,7 +7,7 @@ Created on Fri Jun  5 15:39:20 2020
 """
 
 import numpy as np
-from util import attenuation, generate_fl_signal_from_each_voxel, self_absorption_ratio
+from util_multiprocess import attenuation, generate_fl_signal_from_each_voxel, self_absorption_ratio
 
 
 def create_XRF_data(n_theta, src_path, sample_size, sample_size_l, theta_ls, element_ls,  fl_lines_xdb, fl_lines, probe_energy,  an_lib, att_cs_lib, probe_intensity_1D, det_energy_u, n_det_energy_bins, det_energy_list, sigma, n_det, det_pos_ls):

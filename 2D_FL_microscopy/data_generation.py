@@ -37,7 +37,7 @@ aw_ls = xlib_np.AtomicWeight(an_ls)
 aw_lib = dict(zip(element_ls, aw_ls)) 
 
 n_det = 5
-det_energy_u = 20.0E3
+det_energy_u = 20
 n_det_energy_bins = 2000
 det_energy_list = np.linspace(det_energy_u / n_det_energy_bins, det_energy_u, n_det_energy_bins)
 
@@ -46,14 +46,14 @@ att_cs_ls = xlib_np.CS_Total(an_ls, det_energy_list)
 att_cs_lib = dict(zip(element_ls, att_cs_ls))
 
 
-## Calculate the size of the voxel (unit in mm) using the length of the sample edge divided by the number of the pixels 
+## Calculate the size of the voxel (unit in cm) using the length of the sample edge divided by the number of the pixels 
 voxel_size = sample_size_l / sample_size
 
-## distance of the XRF detector from the sample edge
-det_from_sample = 16
+## distance of the XRF detector from the sample edge (in cm)
+det_from_sample = 1.6
 
-## diameter of the XRF detector
-det_size_l = 2.4
+## diameter of the XRF detector (in cm)
+det_size_l = 0.24
 det_size = np.ceil(det_size_l/voxel_size)
 
 ## number of the detectorlets
