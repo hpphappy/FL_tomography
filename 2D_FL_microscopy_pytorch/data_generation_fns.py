@@ -129,7 +129,7 @@ def attenuation(src_path, theta_st, theta_end, n_theta, sample_size_n,
             att_exponent_acc_map[i,:,:] += att_exponent_acc   
                 
     attenuation_map_flat = np.exp(-(att_exponent_acc_map[:,:,:-1].reshape(n_theta, sample_size_n * sample_size_n)))
-    transmission = np.exp(-att_exponent_acc_map[:,:,-1])
+    transmission = np.exp(-att_exponent_acc_map[:,:,-1].reshape(n_theta, sample_size_n))
     return attenuation_map_flat, transmission
 
 def create_XRT_data(src_path, theta_st, theta_end, n_theta, sample_size_n,
@@ -410,7 +410,8 @@ def intersecting_length_fl_detectorlet(n_det, det_size_cm, det_from_sample_cm, s
     ## define index position of center of the source voxel (x1, y1), note that it's shifted by 0.5 to represent the center
     x1, y1 = x1 + 0.5, y1 + 0.5
     voxel_pos_ls = np.dstack((x1, y1))
-
+    
+    
     ## make voxel_pos_ls 1D array for looping: voxel_pos_ls_flat
     voxel_pos_ls_flat =  np.reshape(voxel_pos_ls, (1, voxel_pos_ls.shape[0] * voxel_pos_ls.shape[1], 2))[0]
 
@@ -585,15 +586,24 @@ def self_absorption_att_ratio_single_theta(src_path, n_det, det_size_cm, det_fro
     return SA_theta
 
 
-def self_absorption_att_ratio(n_thread, theta_st, theta_end, n_theta, grid_concentration, n_det, det_size_cm, det_from_sample_cm, sample_size_n, sample_size_cm, 
-                                       this_aN_dic, probe_energy):
+# def self_absorption_att_ratio(n_thread, theta_st, theta_end, n_theta, grid_concentration, n_det, det_size_cm, det_from_sample_cm, sample_size_n, sample_size_cm, 
+#                                         this_aN_dic, probe_energy):
     
-    pfunc = partial(self_absorption_att_ratio_single_theta, grid_concentration, n_det, det_size_cm, det_from_sample_cm, sample_size_n, sample_size_cm, this_aN_dic, probe_energy)
+#     pfunc = partial(self_absorption_att_ratio_single_theta, grid_concentration, n_det, det_size_cm, det_from_sample_cm, sample_size_n, sample_size_cm, this_aN_dic, probe_energy)
+#     theta_ls = - np.linspace(theta_st, theta_end, n_theta) 
+#     with Pool(n_thread) as p:
+#         SA = np.array(p.map(pfunc, theta_ls))    
+#     return SA
+
+
+def self_absorption_att_ratio(n_thread, theta_st, theta_end, n_theta, src_path, n_det, det_size_cm, det_from_sample_cm, sample_size_n, sample_size_cm, 
+                                        this_aN_dic, probe_energy):
+    
+    pfunc = partial(self_absorption_att_ratio_single_theta, src_path, n_det, det_size_cm, det_from_sample_cm, sample_size_n, sample_size_cm, this_aN_dic, probe_energy)
     theta_ls = - np.linspace(theta_st, theta_end, n_theta) 
     with Pool(n_thread) as p:
         SA = np.array(p.map(pfunc, theta_ls))    
     return SA
-
 
 
 
@@ -704,43 +714,6 @@ def attenuation_theta(src_path, theta_st, theta_end, n_theta, this_theta_idx, sa
     return attenuation_map_theta_flat, transmission_theta
     
  
-def create_probe_after_attenuation_theta_flat(src_path, theta_st, theta_end, n_theta, this_theta_idx, sample_size_n, sample_size_cm, this_aN_dic, probe_energy, probe_cts):      
-    """
-
-    Parameters
-    ----------
-    grid_concentration : TYPE
-        DESCRIPTION.
-    theta_st : TYPE
-        DESCRIPTION.
-    theta_end : TYPE
-        DESCRIPTION.
-    n_theta : TYPE
-        DESCRIPTION.
-    sample_size_n : TYPE
-        DESCRIPTION.
-    sample_size_cm : TYPE
-        DESCRIPTION.
-    this_aN_dic : TYPE
-        DESCRIPTION.
-    probe_energy : TYPE
-        DESCRIPTION.
-    probe_cts : TYPE
-        DESCRIPTION.
-    padding : TYPE, optional
-        DESCRIPTION. The default is True.
-
-    Returns
-    -------
-    probe_after_attenuation_flat : ndarray
-        photon counts that enter each voxel at some theta after attenuation. dimension: (sample_size_n * sample_size_n)
-
-    """
-    probe_before_attenuation_flat = create_probe_before_attnuation_flat(sample_size_n, probe_cts, padding)
-    att_ratio_map_theta_flat = attenuation_theta(grid_concentration, theta_st, theta_end, n_theta, this_theta_idx, sample_size_n, 
-                                                 sample_size_cm, this_aN_dic, probe_energy, padding)[0]
-    probe_after_attenuation_theta_flat = probe_before_attenuation_flat * att_ratio_map_theta_flat
-    return probe_after_attenuation_theta_flat
    
 def generate_fl_signal_from_each_voxel_theta(src_path, theta_st, theta_end, n_theta, this_theta_idx, sample_size_n, sample_size_cm, this_aN_dic, probe_energy):
     """

@@ -410,7 +410,8 @@ def intersecting_length_fl_detectorlet(n_det, det_size_cm, det_from_sample_cm, s
     ## define index position of center of the source voxel (x1, y1), note that it's shifted by 0.5 to represent the center
     x1, y1 = x1 + 0.5, y1 + 0.5
     voxel_pos_ls = np.dstack((x1, y1))
-
+    
+    
     ## make voxel_pos_ls 1D array for looping: voxel_pos_ls_flat
     voxel_pos_ls_flat =  np.reshape(voxel_pos_ls, (1, voxel_pos_ls.shape[0] * voxel_pos_ls.shape[1], 2))[0]
 
