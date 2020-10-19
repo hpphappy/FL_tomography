@@ -182,34 +182,33 @@ def MakeFLlinesDictionary(this_aN_dic, probe_energy,
                           fl_line_groups = np.array(["K", "L", "M"]), fl_K = fl_K, fl_L = fl_L, fl_M = fl_M,
                           group_lines = True):
     """   
-
     Parameters
     ----------
     this_aN_dic: dictionary
         a dictionary of items with key = element symbol (string), and value = atomic number
         e.g. this_aN_dic = {"C":6, "O": 8}
-        
+
     probe_energy : ndarray
         This array is an array with only 1 element. The element is the keV energy of the incident beam.
-        
+
     sample_size_n: int scalar
         sample size in number of pixles on one side, assuing a square sample of N x N pixels
-        
+
     sample_size_cm: scalar
         sample size in cm
-        
+
     fl_line_groups : ndarray, optional
         DESCRIPTION. The default is np.array(["K", "L", "M"]).
-        
+
     fl_K : ndarray, optional
         The default is fl_K, an array of sub-lines of K line with the required format by xraylib.
-        
+
     fl_L : ndarray, optional
         The default is fl_L, an array of sub-lines of L line with the required format by xraylib.
-        
+
     fl_M : ndarray, optional
         The default is fl_M, an array of sub-lines of M line with the required format by xraylib.
-        
+
     group_lines : boolean, optional
         Whether treating all K (or L, M) sub-lines as a single line. The default is True.
 
@@ -221,49 +220,49 @@ def MakeFLlinesDictionary(this_aN_dic, probe_energy,
         key: "(element_name, Line)"
         value: an ndarray of ndarrays of 2 elements(type: string), [element symbol, line group]
         e.g. [['C', 'K'], ['O', 'K'], ['Si', 'K'], ['Si', 'L']]
-        
+
         2nd item
         key: "fl_energy"
         value: float, Fluorescence energy in keV for each line of all element
-        
+
         3rd item: "detected_fl_unit_concentration"
         key: fluorescence yield assuming a unit concentration [1 g/cm^3 ]
     """
-    
+
     element_ls = np.array(list(this_aN_dic.keys()))
     aN_ls = np.array(list(this_aN_dic.values()))
 
     n_line_group = len(fl_line_groups)
     FL_all_elements_dic = {"element_Line": [], "fl_energy": np.array([]), "detected_fl_unit_concentration": np.array([])}
-    voxel_size = sample_size_cm/sample_size_n
+    voxel_size = sample_size_cm/sample_size_n   
 
     fl_cs_K = xlib_np.CS_FluorLine_Kissel_Cascade(aN_ls, fl_K, probe_energy)
     fl_cs_L = xlib_np.CS_FluorLine_Kissel_Cascade(aN_ls, fl_L, probe_energy)
     fl_cs_M = xlib_np.CS_FluorLine_Kissel_Cascade(aN_ls, fl_M, probe_energy)
-    
+
     # Remove the extra dimension with only 1 element
     fl_cs_K = np.reshape(fl_cs_K, (fl_cs_K.shape[:-1]))
     fl_cs_L = np.reshape(fl_cs_L, (fl_cs_L.shape[:-1]))
     fl_cs_M = np.reshape(fl_cs_M, (fl_cs_M.shape[:-1]))
 
-
     fl_energy_K = xlib_np.LineEnergy(aN_ls, fl_K)
     fl_energy_L = xlib_np.LineEnergy(aN_ls, fl_L)
     fl_energy_M = xlib_np.LineEnergy(aN_ls, fl_M)
-    
-    FL_all_elements_dic = {"(element_name, Line)": [], "fl_energy": np.array([]), "detected_fl_unit_concentration": np.array([])}
+
+    FL_all_elements_dic = {"(element_name, Line)": [], "fl_energy": np.array([]), "detected_fl_unit_concentration": np.array([]),
+                           "n_line_group_each_element": np.array([]), "n_lines": None}
     if group_lines == True:
         fl_energy_group = np.zeros((len(element_ls),n_line_group))
         fl_cs_group = np.zeros((len(element_ls),n_line_group))
         for i, element_name in enumerate(element_ls): 
-        
+
             if np.sum(fl_energy_K[i] != 0):
                 fl_energy_group[i,0] = np.average(fl_energy_K[i], weights=fl_cs_K[i]) 
                 fl_cs_group[i,0] = np.sum(fl_cs_K[i])
             else:
                 fl_energy_group[i,0] = 0
                 fl_cs_group[i,0] = 0
-        
+
             if np.sum(fl_energy_L[i] != 0):
                 fl_energy_group[i,1] = np.average(fl_energy_L[i], weights=fl_cs_L[i]) 
                 fl_cs_group[i,1] = np.sum(fl_cs_L[i])
@@ -282,14 +281,16 @@ def MakeFLlinesDictionary(this_aN_dic, probe_energy,
             element_Line = [[element_name, element_Line[j]] for j in range(len(element_Line))]
             for k in range(len(element_Line)):
                 FL_all_elements_dic["(element_name, Line)"].append(element_Line[k])     
-        
+
             Line_energy = fl_energy_group[i][fl_energy_group[i]!=0]
             FL_all_elements_dic["fl_energy"] = np.append(FL_all_elements_dic["fl_energy"], Line_energy)
-        
             fl_unit_con = fl_cs_group[i][fl_energy_group[i]!=0] * voxel_size
             FL_all_elements_dic["detected_fl_unit_concentration"] = np.append(FL_all_elements_dic["detected_fl_unit_concentration"], fl_unit_con)
+            FL_all_elements_dic["n_line_group_each_element"] = np.append(FL_all_elements_dic["n_line_group_each_element"], len(fl_unit_con))
             
-        FL_all_elements_dic["(element_name, Line)"] = np.array(FL_all_elements_dic["(element_name, Line)"])     
+        FL_all_elements_dic["(element_name, Line)"] = np.array(FL_all_elements_dic["(element_name, Line)"])
+    
+    FL_all_elements_dic["n_lines"] = len(FL_all_elements_dic["(element_name, Line)"])
     return FL_all_elements_dic
 
 ## Calcualte FL_map, the emitted FL signal at each voxel for each elemental line given the intensity enters each voxel are all 1.

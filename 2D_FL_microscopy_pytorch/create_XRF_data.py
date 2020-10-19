@@ -31,7 +31,7 @@ params_2d_layer_5 = {'n_thread': 1,
                   }
 
 
-params_2d_layer_30 = {'n_thread': 1,
+params_2d_layer_30 = {'n_thread': 3,
                    'theta_st': 0, 
                    'theta_end': np.pi,
                    'n_theta': 13, 
