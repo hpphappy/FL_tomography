@@ -68,7 +68,7 @@ def attenuation_3d(src_path, theta_st, theta_end, n_theta, sample_height_n, samp
     
     
     n_element = len(this_aN_dic)
-    theta_ls = - tc.linspace(theta_st, theta_end, n_theta)
+    theta_ls = - tc.linspace(theta_st, theta_end, n_theta+1)[:-1]
     grid_concentration = tc.tensor(np.load(src_path)).float()
     aN_ls = np.array(list(this_aN_dic.values()))
     probe_attCS_ls = tc.tensor(xlib_np.CS_Total(aN_ls, probe_energy).flatten()).float().to(dev)
@@ -264,7 +264,7 @@ def MakeFLlinesDictionary(this_aN_dic, probe_energy,
 def generate_fl_signal_from_each_voxel_3d(src_path, theta_st, theta_end, n_theta, sample_size_n, sample_height_n, sample_size_cm, this_aN_dic, probe_energy, dev):
 
     element_ls = np.array(list(this_aN_dic.keys()))
-    theta_ls = - np.linspace(theta_st, theta_end, n_theta)
+    theta_ls = - np.linspace(theta_st, theta_end, n_theta+1)[:-1]
 
     grid_concentration = tc.tensor(np.load(src_path)).float()
 
@@ -543,7 +543,7 @@ def self_absorption_att_ratio_3d(n_thread, theta_st, theta_end, n_theta, src_pat
     
     pfunc = partial(self_absorption_att_ratio_single_theta_3d, src_path, det_size_cm, det_from_sample_cm, det_ds_spacing_cm, sample_size_n, sample_size_cm,
                     sample_height_n, this_aN_dic, probe_energy, dev)
-    theta_ls = - tc.linspace(theta_st, theta_end, n_theta).to(dev)
+    theta_ls = - tc.linspace(theta_st, theta_end, n_theta+1)[:-1].to(dev)
     with Pool(n_thread) as p:
         SA = tc.stack(p.map(pfunc, theta_ls))   
     # SA = tc.from_numpy(SA)

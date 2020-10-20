@@ -4,8 +4,8 @@ Si
 Ca
 Fe
 n_minibatch = 1theta_st = 0.00
-theta_end = 3.14
-n_theta = 5
+theta_end = 6.28
+n_theta = 4
 sample_size_n = 5
 sample_height_n = 1
 sample_size_cm = 0.01

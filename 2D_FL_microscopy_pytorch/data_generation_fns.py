@@ -108,7 +108,7 @@ def attenuation(src_path, theta_st, theta_end, n_theta, sample_size_n,
     probe_attCS_ls = xlib_np.CS_Total(aN_ls, probe_energy).flatten()
     probe_attCS_dic = dict(zip(element_ls, probe_attCS_ls))
     
-    theta_ls = - np.linspace(theta_st, theta_end, n_theta)
+    theta_ls = - np.linspace(theta_st, theta_end, n_theta, endpoint=False)
     grid_concentration = np.load(os.path.join(src_path, 'grid_concentration.npy'))
 
     att_exponent_acc_map = np.zeros((len(theta_ls), sample_size_n, sample_size_n+1))
@@ -329,7 +329,7 @@ def generate_fl_signal_from_each_voxel(src_path, theta_st, theta_end, n_theta, s
 
     """
     element_ls = np.array(list(this_aN_dic.keys()))
-    theta_ls = - np.linspace(theta_st, theta_end, n_theta)
+    theta_ls = - np.linspace(theta_st, theta_end, n_theta, endpoint=False)
     
     grid_concentration = np.load(os.path.join(src_path, 'grid_concentration.npy'))
     fl_all_lines_dic = MakeFLlinesDictionary(this_aN_dic, probe_energy,
@@ -591,7 +591,7 @@ def self_absorption_att_ratio_single_theta(src_path, n_det, det_size_cm, det_fro
 #                                         this_aN_dic, probe_energy):
     
 #     pfunc = partial(self_absorption_att_ratio_single_theta, grid_concentration, n_det, det_size_cm, det_from_sample_cm, sample_size_n, sample_size_cm, this_aN_dic, probe_energy)
-#     theta_ls = - np.linspace(theta_st, theta_end, n_theta) 
+#     theta_ls = - np.linspace(theta_st, theta_end, n_theta, endpoint=False) 
 #     with Pool(n_thread) as p:
 #         SA = np.array(p.map(pfunc, theta_ls))    
 #     return SA
@@ -601,7 +601,7 @@ def self_absorption_att_ratio(n_thread, theta_st, theta_end, n_theta, src_path, 
                                         this_aN_dic, probe_energy):
     
     pfunc = partial(self_absorption_att_ratio_single_theta, src_path, n_det, det_size_cm, det_from_sample_cm, sample_size_n, sample_size_cm, this_aN_dic, probe_energy)
-    theta_ls = - np.linspace(theta_st, theta_end, n_theta) 
+    theta_ls = - np.linspace(theta_st, theta_end, n_theta, endpoint=False) 
     with Pool(n_thread) as p:
         SA = np.array(p.map(pfunc, theta_ls))    
     return SA
@@ -688,7 +688,7 @@ def attenuation_theta(src_path, theta_st, theta_end, n_theta, this_theta_idx, sa
     probe_attCS_ls = xlib_np.CS_Total(aN_ls, probe_energy).flatten()
     probe_attCS_dic = dict(zip(element_ls, probe_attCS_ls))
     
-    theta_ls = - np.linspace(theta_st, theta_end, n_theta)
+    theta_ls = - np.linspace(theta_st, theta_end, n_theta, endpoint=False)
     theta = theta_ls[this_theta_idx]
     
     grid_concentration = np.load(os.path.join(src_path, 'grid_concentration.npy'))
@@ -748,7 +748,7 @@ def generate_fl_signal_from_each_voxel_theta(src_path, theta_st, theta_end, n_th
 
     """
     element_ls = np.array(list(this_aN_dic.keys()))
-    theta_ls = - np.linspace(theta_st, theta_end, n_theta)
+    theta_ls = - np.linspace(theta_st, theta_end, n_theta, endpoint=False)
     theta = theta_ls[this_theta_idx]
     
     grid_concentration = np.load(os.path.join(src_path, 'grid_concentration.npy'))
@@ -783,7 +783,7 @@ def generate_fl_signal_from_each_voxel_theta(src_path, theta_st, theta_end, n_th
 def create_XRF_data_single_theta(theta_st, theta_end, n_theta, this_theta_idx, src_path, n_det, det_size_cm, det_from_sample_cm,
                                  sample_size_n, sample_size_cm, this_aN_dic, probe_cts, probe_energy, save_path, save_fname):
     
-    theta_ls = - np.linspace(theta_st, theta_end, n_theta)
+    theta_ls = - np.linspace(theta_st, theta_end, n_theta, endpoint=False)
     theta = theta_ls[this_theta_idx]
     
     probe_before_attenuation_flat = probe_cts * np.ones((sample_size_n * sample_size_n))

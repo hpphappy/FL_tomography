@@ -20,8 +20,8 @@ dev = "cpu"
 
 params_3d_5_5_5 = {'n_thread': 5,
                    'theta_st': tc.tensor(0).to(dev), 
-                   'theta_end': tc.tensor(np.pi).to(dev),
-                   'n_theta': tc.tensor(5).to(dev), 
+                   'theta_end': tc.tensor(2 * np.pi).to(dev),
+                   'n_theta': tc.tensor(8).to(dev), 
                    'src_path': os.path.join('./data/sample3_pad', 'grid_concentration.npy'), 
                    'det_size_cm': 0.24, 
                    'det_from_sample_cm': 1.6,
