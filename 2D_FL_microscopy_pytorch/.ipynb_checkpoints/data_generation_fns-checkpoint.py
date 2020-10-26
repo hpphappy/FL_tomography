@@ -256,21 +256,21 @@ def MakeFLlinesDictionary(this_aN_dic, probe_energy,
         fl_cs_group = np.zeros((len(element_ls),n_line_group))
         for i, element_name in enumerate(element_ls): 
 
-            if np.sum(fl_energy_K[i] != 0):
+            if np.sum(fl_cs_K[i] != 0):
                 fl_energy_group[i,0] = np.average(fl_energy_K[i], weights=fl_cs_K[i]) 
                 fl_cs_group[i,0] = np.sum(fl_cs_K[i])
             else:
                 fl_energy_group[i,0] = 0
                 fl_cs_group[i,0] = 0
 
-            if np.sum(fl_energy_L[i] != 0):
+            if np.sum(fl_cs_L[i] != 0):
                 fl_energy_group[i,1] = np.average(fl_energy_L[i], weights=fl_cs_L[i]) 
                 fl_cs_group[i,1] = np.sum(fl_cs_L[i])
             else:
                 fl_energy_group[i,1] = 0
                 fl_cs_group[i,1] = 0
 
-            if np.sum(fl_energy_M[i] != 0):
+            if np.sum(fl_cs_M[i] != 0):
                 fl_energy_group[i,2] = np.average(fl_energy_M[i], weights=fl_cs_M[i]) 
                 fl_cs_group[i,2] = np.sum(fl_cs_M[i])
             else:

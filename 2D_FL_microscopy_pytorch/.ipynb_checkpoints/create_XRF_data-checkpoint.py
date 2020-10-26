@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore")
 params_2d_layer_5 = {'n_thread': 1,
                    'theta_st': 0, 
                    'theta_end': 2 * np.pi,
-                   'n_theta': 4, 
+                   'n_theta': 8, 
                    'src_path': './data/sample3_pad', 
                    'n_det': 5, 
                    'det_size_cm': 0.24, 
@@ -34,7 +34,7 @@ params_2d_layer_5 = {'n_thread': 1,
 params_2d_layer_30 = {'n_thread': 3,
                    'theta_st': 0, 
                    'theta_end': 2 * np.pi,
-                   'n_theta': 12, 
+                   'n_theta': 24, 
                    'src_path': './data/sample1_pad', 
                    'n_det': 5, 
                    'det_size_cm': 0.24, 
@@ -50,6 +50,6 @@ params_2d_layer_30 = {'n_thread': 3,
 
 
 if __name__ == "__main__":
-    params = params_2d_layer_30
+    params = params_2d_layer_5
     XRF_data = create_XRF_data(**params)
 
